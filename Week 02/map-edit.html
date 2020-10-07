@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>地图编辑器</title>
+  <style>
+    *{
+      margin: 0px;
+      padding: 0px;
+    }
+    #container{
+      margin-top: 10px;
+      margin-left: 10px;
+      font-size: 0px;
+      width: 812px;
+    }
+    .cell{
+      height: 7px;
+      width: 7px;
+      display: inline-block;
+      line-height: 7px;
+      background-color: gray;
+      border-bottom: 1px solid white;
+      border-right: 1px solid white;
+      vertical-align: middle;
+    }
+    button{
+      width: 48px;
+      height: 20px;
+      text-align: center;
+      line-height: 20px;
+      font-size: 16px;
+    }
+  </style>
+</head>
+<body>
+  <div id="container"></div>
+  <button>save</button>
+  <script src="./map-edit.js"></script>
+</body>
+</html>
