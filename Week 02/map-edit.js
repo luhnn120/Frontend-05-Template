@@ -65,6 +65,26 @@ class Heap{
       break
     }
   }
+  sorted(point){
+    // 只考虑上浮
+    let pointIndex = 0
+    for (; pointIndex < this.data.length; pointIndex++) {
+      if(this.data[pointIndex][0] === point[0] && this.data[pointIndex][1] === point[1]){
+        break
+      }
+    }
+    for(let index = pointIndex; index >=1;) {
+      let parentIndex = Math.floor((index-1)/2)
+      if(this.compare(this.data[parentIndex], this.data[index]) > 0){
+        let tmp = this.data[index]
+        this.data[index] = this.data[parentIndex]
+        this.data[parentIndex] = tmp
+        index = parentIndex
+        continue
+      }
+      break
+    }
+  }
   show(){
     console.log(this.data)
   }
@@ -102,49 +122,68 @@ class Sorted{
 async function findPath(map, start, end){
   const startTime = new Date().getTime()
   let mapTmp = Object.create(map)
-  let query = new Heap([start], (a,b) => distance(a) - distance(b))
+  let query = new Heap([start], (a,b) => {
+    return distance(a) + gLength(a) - ( distance(b) + gLength(b) )
+    // return distance(a) - ( distance(b) )
+  })
+  let closedMap = new Map()
   while(query.length != 0 ){
     let [x, y] = query.take()
+    closedMap.set(x+y*100, true)
     if(x === end[0] && y === end[1]){
       let path = [end]
       while(x !== start[0] || y !== start[1]){
-        await sleep(20)
-        document.getElementById('container').children[x+ y*100].style.backgroundColor = 'purple'
-        let tmp = mapTmp[x + y*100]
-        x = tmp[0]
-        y = tmp[1]
-        path.push(tmp)
+        // await sleep(20)
+        document.getElementById('container').children[x+ y*100].style.backgroundColor = 'purple';
+        [x, y] = mapTmp[x + y*100]
+        path.push([x,y])
       }
       const endTime = new Date().getTime();
       console.log('time =====', (endTime - startTime))
       console.log('step =====', path.length)
       return path
     }
-    await insert(x-1, y, [x, y])
-    await insert(x+1, y, [x, y])
-    await insert(x, y-1, [x, y])
-    await insert(x, y+1, [x, y])
-    await insert(x-1, y-1, [x, y])
-    await insert(x-1, y+1, [x, y])
-    await insert(x+1, y-1, [x, y])
-    await insert(x+1, y+1, [x, y])
+    insert(x-1, y, [x, y])
+    insert(x+1, y, [x, y])
+    insert(x, y-1, [x, y])
+    insert(x, y+1, [x, y])
+    insert(x-1, y-1, [x, y])
+    insert(x-1, y+1, [x, y])
+    insert(x+1, y-1, [x, y])
+    insert(x+1, y+1, [x, y])
   }
   return null
   function distance(point){
     return (end[0] - point[0]) ** 2 + (end[1] - point[1]) **2
   } 
-  // TODO: 优化最短路径，主要是pre点和有值时的返回
   async function insert(x, y, pre){
     if(x < 0 || y < 0 || x > 99 || y > 99){
       return
     }
     if(mapTmp[x + 100*y]){
+      if(!closedMap.has(x+y*100) && mapTmp[x + 100*y] !== 1){
+        // 优化最短路径 当前点在openList中，重新计算到起点的长度
+        if( gLength(pre) < gLength(mapTmp[x + 100*y]) ){
+          mapTmp[x + 100*y] = pre
+          // 重新排序openlist
+          query.sorted([x, y])
+        }
+      }
       return
     }
     // await sleep(20)
     document.getElementById('container').children[x+ y*100].style.backgroundColor = 'lightgreen'
     mapTmp[x + 100*y] = pre
     query.give([x,y])
+  }
+  // G值 poit到start点的消耗
+  function gLength(point){
+    let path = 0
+    while (point[0] !== start[0] || point[1] !== start[1]) {
+      path++
+      point = mapTmp[point[0] + 100*point[1]]
+    }
+    return path
   }
 }
 function show(){
