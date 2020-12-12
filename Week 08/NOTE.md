@@ -42,3 +42,20 @@ ip协议中数据以包的形式，通过IP地址分发内容。在node中没有
 ## HTTP
   http协议是文本型的协议，数据是以字符串的形式存在
 
+# 实现
+* 设计HTTP请求类
+* options处理
+  * content-type的处理
+  * 不同content-type,body的处理
+  * content-length的处理
+* send函数
+  * send是一个异步的过程，返回一个promise
+  * 文本类型的response通过parser去解析
+  * 发布请求，支持已有connection或者新建connection
+  * 结束状态由parser的状态判断
+* ResponseParser
+  * Response需要分段去解析，所以我们需要一个parser来进行装配
+  * 通过状态机来分段拆分文本
+* BodyParser
+  * Response的body更具content-type有多种不同的结构，因此采用子parser的形式
+  * 同样使用状态机来处理body
