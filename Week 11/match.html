@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <div>
+    <div class="class" id="id">test</div>
+  </div>
+</body>
+<script>
+function match(selector, element) {
+    //  反转选择器数组
+    let selectors = selector.split(',');
+    selectors = selectors.map(item => item.split(' ').reverse());
+    
+    let queue = [];
+    while(element && element.tagName) {
+      queue.push(element);
+      element = element.parentElement;
+    }
+    
+    //  因可能是并集复合选择器，因此先循环选择器，匹配任意一个选择器即可 #a b, #a c {...}
+    for(let i = 0; i < selectors.length; i++) {
+      let selectorParts = selectors[i];
+      let matchNum = 0;
+      
+      //  循环元素
+      for(let j = 0; j < queue.length; j++ ) {
+        if(matchHelper(queue[j], selectorParts[matchNum])) {
+          matchNum++;
+        }
+      }
+      
+      //  所有元素匹配上
+      if(matchNum >= selectorParts.length) {
+        return true;
+      }
+    }
+    return false;
+  }
+  
+  //  匹配辅助函数
+  function matchHelper(element, selector) {
+    if(!selector || !element.attributes) {
+      return false;
+    }
+  
+    //  id
+    if(selector.startsWith('#')) {
+      let attr =  Array.from(element.attributes).filter(attr => attr.name === 'id')[0];
+      if(attr && attr.value === selector.replace('#', '')) {
+        return true;
+      }
+    } 
+  
+    //  class
+    else if(selector.startsWith('.')) {
+      let attr = Array.from(element.attributes).filter(attr => attr.name === 'class')[0];
+      if(attr && attr.value === selector.replace('.', '')) {
+        return true;
+      }
+      //  子类
+      if(attr && attr.value.split(' ').includes(selector.replace('.', ''))) {
+        return true;
+      }
+    } 
+    
+    //  组合选择器
+    else if(selector.match(/[.#:\[]/)){
+      const simpleSelectors = selector.split(/(?<=[\w\]\)])(?=[#.:\[])/);
+      return simpleSelectors.every(simpleSelector => matchHelper(element, simpleSelector));
+    } 
+    
+    //  标签选择器
+    else {
+        return selector === element.tagName.toLowerCase();
+    }
+    return false;
+  }
+  console.log(match("div #id", document.getElementById("id")));
+</script>
+
+</html>
