@@ -12,17 +12,17 @@ let d = [
   {
     url: 'https://time.geekbang.org/',
     img: "https://static001.geekbang.org/resource/image/1b/21/1b809d9a2bdf3ecc481322d7c9223c21.jpg",
-    titile: '橘猫'
+    title: '橘猫'
   },
   {
     url: 'https://time.geekbang.org/',
     img: "https://static001.geekbang.org/resource/image/b6/4f/b6d65b2f12646a9fd6b8cb2b020d754f.jpg",
-    titile: '狸花猫'
+    title: '狸花猫'
   },
   {
     url: 'https://time.geekbang.org/',
     img: "https://static001.geekbang.org/resource/image/73/e4/730ea9c393def7975deceb48b3eb6fe4.jpg",
-    titile: '橘猫加白'
+    title: '橘猫加白'
   },
 ]
 let dom = <Carousel src={d} 
@@ -37,10 +37,11 @@ let btn = <Button >
 let list = <List data = {d}>
 { (record) => <div>
     <img src={record.img}></img>
-    <a href={record.url}>{record.titile}</a>
+    <a href={record.url}>{record.title}</a>
   </div>
 }
 </List>
 
 dom.mountTo(document.body)
 btn.mountTo(document.body)
+list.mountTo(document.body)
