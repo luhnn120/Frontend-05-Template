@@ -1,3 +1,18 @@
 <body oncontextmenu="event.preventDefault()">
-  <script src="./index.js"></script>
+  <script type="module">
+    import {enableGesture} from './index.js';
+    enableGesture(document.documentElement);
+    document.documentElement.addEventListener('flick', event => {
+      console.log('flick', event)
+    })
+    document.documentElement.addEventListener('press', event => {
+      console.log('press')
+    })
+    document.documentElement.addEventListener('tap', event => {
+      console.log('tap')
+    })
+    document.documentElement.addEventListener('pan end', event => {
+      console.log('pan end', event)
+    })
+  </script>
 </body>
